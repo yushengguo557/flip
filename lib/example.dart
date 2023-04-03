@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
@@ -30,11 +30,11 @@ class MyHomePage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            HourWidget(),
-            Padding(padding: EdgeInsets.only(left: 10, right: 10)),
-            MinutesWidget(),
-            Padding(padding: EdgeInsets.only(left: 10, right: 10)),
-            SecondWidget(),
+            Block(),
+            Padding(padding: EdgeInsets.only(left: 5, right: 5)),
+            Block(),
+            Padding(padding: EdgeInsets.only(left: 5, right: 5)),
+            Block(),
           ],
         ),
       ),
@@ -42,20 +42,28 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class SecondWidget extends StatelessWidget {
-  const SecondWidget({super.key});
+class Block extends StatelessWidget {
+  const Block({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final digits = [];
-    for (var i = 0; i < 60; i++) {
-      digits.add(i);
-    }
+    final digits = [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+    ];
     return FlipPanel.builder(
       itemBuilder: (context, index) => Container(
         alignment: Alignment.center,
-        width: 256.0,
-        height: 198.0,
+        width: 96.0,
+        height: 128.0,
         decoration: const BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -64,7 +72,7 @@ class SecondWidget extends StatelessWidget {
           '${digits[index]}',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 100.0,
+            fontSize: 80.0,
             color: Colors.green,
           ),
         ),
@@ -72,77 +80,6 @@ class SecondWidget extends StatelessWidget {
       itemsCount: digits.length,
       period: const Duration(milliseconds: 1000),
       loop: -1,
-      startIndex: DateTime.now().second,
-    );
-  }
-}
-
-class MinutesWidget extends StatelessWidget {
-  const MinutesWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final digits = [];
-    for (var i = 0; i < 60; i++) {
-      digits.add(i);
-    }
-    return FlipPanel.builder(
-      itemBuilder: (context, index) => Container(
-        alignment: Alignment.center,
-        width: 256.0,
-        height: 198.0,
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Text(
-          '${digits[index]}',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 100.0,
-            color: Colors.green,
-          ),
-        ),
-      ),
-      itemsCount: digits.length,
-      period: const Duration(milliseconds: 1000 * 60),
-      loop: -1,
-      startIndex: DateTime.now().minute,
-    );
-  }
-}
-
-class HourWidget extends StatelessWidget {
-  const HourWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final digits = [];
-    for (var i = 0; i < 24; i++) {
-      digits.add(i);
-    }
-    return FlipPanel.builder(
-      itemBuilder: (context, index) => Container(
-        alignment: Alignment.center,
-        width: 256.0,
-        height: 198.0,
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Text(
-          '${digits[index]}',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 100.0,
-            color: Colors.green,
-          ),
-        ),
-      ),
-      itemsCount: digits.length,
-      period: const Duration(milliseconds: 1000 * 60 * 60),
-      loop: -1,
-      startIndex: DateTime.now().hour,
     );
   }
 }
@@ -199,9 +136,9 @@ class FlipPanel<T> extends StatefulWidget {
     required IndexedItemBuilder itemBuilder,
     required this.itemsCount,
     required this.period,
-    required this.startIndex,
     this.duration = const Duration(milliseconds: 500),
     this.loop = 1,
+    this.startIndex = 0,
     this.spacing = 0.5,
     this.direction = FlipDirection.up,
   })  : assert(itemsCount != null),
@@ -369,8 +306,10 @@ class _FlipPanelState<T> extends State<FlipPanel>
                   context, _currentIndex! % widget.itemsCount!);
         }
         _child2 = null;
-        _upperChild1 = _upperChild2 ?? makeUpperClip(_child1!);
-        _lowerChild1 = _lowerChild2 ?? makeLowerClip(_child1!);
+        _upperChild1 =
+            _upperChild2 != null ? _upperChild2 : makeUpperClip(_child1!);
+        _lowerChild1 =
+            _lowerChild2 != null ? _lowerChild2 : makeLowerClip(_child1!);
       }
       if (_child2 == null) {
         _child2 = _isStreamMode!
@@ -389,8 +328,10 @@ class _FlipPanelState<T> extends State<FlipPanel>
             : widget.indexedItemBuilder!(
                 context, _currentIndex! % widget.itemsCount!);
       }
-      _upperChild1 = _upperChild2 ?? makeUpperClip(_child1!);
-      _lowerChild1 = _lowerChild2 ?? makeLowerClip(_child1!);
+      _upperChild1 =
+          _upperChild2 != null ? _upperChild2 : makeUpperClip(_child1!);
+      _lowerChild1 =
+          _lowerChild2 != null ? _lowerChild2 : makeLowerClip(_child1!);
     }
   }
 
